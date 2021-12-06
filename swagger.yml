@@ -1,3 +1,4 @@
+#This file serves as restAPI endpoint
 swagger: "2.0"
 info:
   description: This is the swagger file that goes with our server code
