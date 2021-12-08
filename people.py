@@ -6,11 +6,7 @@ from models import (
 )
 
 def read_all():
-    """
-    This function responds to a request for /api/people
-    with the complete lists of people
-    :return:        json string of list of people
-    """
+    
     # Create the list of people from our data
     people = Person.query.order_by(Person.lname).all()
     person_schema = PersonSchema(many=True)  
