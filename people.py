@@ -28,7 +28,6 @@ def read_one(person_id):
             404, "Person not found for Id: {peerson_id}".format(person_id=person_id)
         )
 
-    return person
 
 
 def create(person):
@@ -55,42 +54,52 @@ def create(person):
         )
 
 
-def update(lname, person):
-    """
-    This function updates an existing person in the people structure
-    :param lname:   last name of person to update in the people structure
-    :param person:  person to update
-    :return:        updated person structure
-    """
-    # Does the person exist in people?
-    if lname in PEOPLE:
-        PEOPLE[lname]["fname"] = person.get("fname")
-        PEOPLE[lname]["timestamp"] = get_timestamp()
+def update(person_id, person):
+    update_person = Person.query.filter(
+        Person.person_id == person_id
+    ).one_or_none()
 
-        return PEOPLE[lname]
+    fname = person.get("fname")
+    lname = person.get("lname")
 
-    # otherwise, nope, that's an error
-    else:
+    existing_person = (
+        Person.query.filter(Person.fname == fname)
+        .filter(Person.lname == lname)
+        .one_or_none()
+    )
+
+    if update_person is None:
         abort(
-            404, "Person with last name {lname} not found".format(lname=lname)
+            404, "Person not found for Id: {person_id}".format(person_id=person_id),
         )
+    elif (existing_person is not None and existing_person.person_id != person_id):
+        abort(409, "Person {fname}{lname} exists already".format(fname=fname,lname=lname),
+    )
+    else:
 
+        schema = PersonSchema()
+        update = schema.load(person, session=db.session)
 
-def delete(lname):
-    """
-    This function deletes a person from the people structure
-    :param lname:   last name of person to delete
-    :return:        200 on successful delete, 404 if not found
-    """
-    # Does the person to delete exist?
-    if lname in PEOPLE:
-        del PEOPLE[lname]
+        update.person_id = update_person.person_id
+        db.session.merge(update)
+        db.session.commit()
+
+        data = schema.dump(update_person)
+
+        return data, 200
+
+def delete(person_id):
+    person = Person.query.filter(Person.person_id == person_id).one_or_none()
+
+    if person is not None:
+        db.session.delete(person)
+        db.session.commit()
         return make_response(
-            "{lname} successfully deleted".format(lname=lname), 200
+            "Person {person_id} deleted".format(person_id=person_id), 200
         )
 
-    # Otherwise, nope, person to delete not found
     else:
         abort(
-            404, "Person with last name {lname} not found".format(lname=lname)
+            404,
+            "Person not found for Id: {person_id}".format(person_id=person_id),
         )
