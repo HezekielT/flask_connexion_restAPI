@@ -23,6 +23,7 @@ ns.model = (function() {
             };
             $.ajax(ajax_options)
             .done(function(data) {
+                
                 $event_pump.trigger('model_read_success', [data]);
             })
             .fail(function(xhr, textStatus, errorThrown) {
@@ -230,9 +231,12 @@ ns.controller = (function(m, v) {
             lname: lname,
         });
     });
-
+    const sth = (data)=>{
+        data.map(da=>{console.log(da)})
+    }
     // Handle the model events
     $event_pump.on('model_read_success', function(e, data) {
+        print(data)
         view.build_table(data);
         view.reset();
     });

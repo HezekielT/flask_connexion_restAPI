@@ -5,7 +5,7 @@ from models import Person
 PEOPLE = [
     {'fname': 'Doug', 'lname': 'Farrell'},
     {'fname': 'Kent', 'lname': 'Brockman'},
-    {'fname': 'Bunny','lname': 'Easter'}
+    {'fname': 'Bunny','lname': 'Easter'},
 ]
 
 
