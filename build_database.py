@@ -1,6 +1,7 @@
 import os
+from datetime import datetime
 from config import db
-from models import Person
+from models import Person, Note
 
 PEOPLE = [
     {
@@ -44,6 +45,15 @@ db.create_all()
 
 for person in PEOPLE:
     p = Person(lname=person['lname'], fname=person['fname'])
+
+    for note in person.get("notes"):
+        content, timestamp = note
+        p.note.append(
+            Note(
+                content=content,
+                timestamp=datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S"),
+            )
+        )
     db.session.add(p)
 
 db.session.commit()
