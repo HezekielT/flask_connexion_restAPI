@@ -1,6 +1,6 @@
 from flask import make_response, abort
 from config import db
-from models import Person, PersonSchema
+from models import Person, PersonSchema, Note
 
 
 def read_all():
@@ -15,7 +15,7 @@ def read_all():
 
     # Serialize the data for the response
     person_schema = PersonSchema(many=True)
-    data = person_schema.dump(people)
+    data = person_schema.dump(people).data
     return data
 
 
@@ -28,14 +28,14 @@ def read_one(person_id):
     :return:            person matching id
     """
     # Get the person requested
-    person = Person.query.filter(Person.person_id == person_id).one_or_none()
+    person = Person.query.filter(Person.person_id == person_id).outerjoin(Note).one_or_none()
 
     # Did we find a person?
     if person is not None:
 
         # Serialize the data for the response
         person_schema = PersonSchema()
-        data = person_schema.dump(person)
+        data = person_schema.dump(person).data
         return data
 
     # Otherwise, nope, didn't find that person
@@ -58,7 +58,9 @@ def create(person):
     lname = person.get("lname")
 
     existing_person = (
-        Person.query.filter(Person.fname == fname).filter(Person.lname == lname).one_or_none()
+        Person.query.filter(Person.fname == fname)
+        .filter(Person.lname == lname)
+        .one_or_none()
     )
 
     if existing_person is None:

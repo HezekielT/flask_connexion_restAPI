@@ -48,7 +48,7 @@ for person in PEOPLE:
 
     for note in person.get("notes"):
         content, timestamp = note
-        p.note.append(
+        p.notes.append(
             Note(
                 content=content,
                 timestamp=datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S"),
