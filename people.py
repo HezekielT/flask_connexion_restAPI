@@ -15,7 +15,7 @@ def read_all():
 
     # Serialize the data for the response
     person_schema = PersonSchema(many=True)
-    data = person_schema.dump(people).data
+    data = person_schema.dump(people)
     return data
 
 

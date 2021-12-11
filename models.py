@@ -29,8 +29,6 @@ class Note(db.Model):
 
 
 class PersonSchema(SQLAlchemyAutoSchema):
-    def __init__(self, **kwargs):
-        super().__init__(strict=True, **kwargs)
     class Meta:
         model = Person
         include_relationships = True
